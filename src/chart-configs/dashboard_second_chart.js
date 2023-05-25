@@ -43,7 +43,7 @@ function createDataPowerToday(data) {
       baseFont: "Nunito Sans Regular",
       baseFontColor: "#FDFDFD",
       divLineThickness: "2",
-      numberPrefix: "VND",
+
       showLimits: "0",
       showDivLineValues: "0",
       paletteColors: "#58E2C2",
@@ -56,12 +56,15 @@ function createDataPowerToday(data) {
       canvasLeftMargin: "35",
       canvasBottomMargin: "60",
       canvasTopMargin: "60",
+      placeValuesInside: "0",
+      yAxisMaxValue: "250",
       toolTipBgcolor: "#484E69",
       toolTipPadding: "7",
       toolTipBorderRadius: "3",
       toolTipBorderAlpha: "30",
       tooltipBorderThickness: "0.7",
       toolTipColor: "#FDFDFD",
+      yaxismaxvalue: "280",
       transposeAnimation: "1",
     },
 
@@ -88,6 +91,15 @@ function createDataPowerToday(data) {
               x: "$canvasEndX + 100",
               y: "$canvasheight/2 - 15",
             },
+            {
+              id: "indicator",
+              type: "text",
+              text: "VND",
+              color: "#FDFDFD",
+              fontSize: "14",
+              x: "$canvasEndX + 100",
+              y: "$canvasheight/2 +5",
+            },
           ],
         },
       ],
@@ -96,11 +108,11 @@ function createDataPowerToday(data) {
     data: [
       {
         label: previousDay,
-        value: data[0] * costInDay,
+        value: (data[0] * costInMonth).toFixed(2),
       },
       {
         label: currentDay,
-        value: data[1] * costInDay,
+        value: (data[1] * costInMonth).toFixed(2),
       },
     ],
   };
@@ -126,7 +138,7 @@ function createDataPowerMonth(data) {
       baseFont: "Nunito Sans Regular",
       baseFontColor: "#FDFDFD",
       divLineThickness: "2",
-      numberPrefix: "VND",
+
       showLimits: "0",
       showDivLineValues: "0",
       paletteColors: "#58E2C2",
@@ -174,6 +186,15 @@ function createDataPowerMonth(data) {
               x: "$canvasEndX + 100",
               y: "$canvasheight/2 - 15",
             },
+            {
+              id: "indicator",
+              type: "text",
+              text: "VND",
+              color: "#FDFDFD",
+              fontSize: "14",
+              x: "$canvasEndX + 100",
+              y: "$canvasheight/2 +5",
+            },
           ],
         },
       ],
@@ -182,14 +203,15 @@ function createDataPowerMonth(data) {
     data: [
       {
         label: previousMonth,
-        value: data[0] * costInMonth,
+        value: (data[0] * costInMonth).toFixed(2),
       },
       {
         label: currentMonth,
-        value: data[1] * costInMonth,
+        value: (data[1] * costInMonth).toFixed(2),
       },
     ],
   };
+  console.log(data[1] * costInMonth);
   return second_chart_month;
 }
 
@@ -212,7 +234,7 @@ function createDataPowerYear(data) {
       baseFont: "Nunito Sans Regular",
       baseFontColor: "#FDFDFD",
       divLineThickness: "2",
-      numberPrefix: "VND",
+
       showLimits: "0",
       showDivLineValues: "0",
       paletteColors: "#58E2C2",
@@ -226,16 +248,15 @@ function createDataPowerYear(data) {
       canvasBottomMargin: "60",
       canvasTopMargin: "60",
       placeValuesInside: "0",
-      yAxisMaxValue: "2000",
+      yAxisMaxValue: "250",
       toolTipBgcolor: "#484E69",
       toolTipPadding: "7",
       toolTipBorderRadius: "3",
       toolTipBorderAlpha: "30",
       tooltipBorderThickness: "0.7",
       toolTipColor: "#FDFDFD",
-      decimals: "1",
+      yaxismaxvalue: "280",
       transposeAnimation: "1",
-      formatNumberScale: "0",
     },
 
     annotations: {
@@ -261,6 +282,15 @@ function createDataPowerYear(data) {
               x: "$canvasEndX + 100",
               y: "$canvasheight/2 - 15",
             },
+            {
+              id: "indicator",
+              type: "text",
+              text: "VND",
+              color: "#FDFDFD",
+              fontSize: "14",
+              x: "$canvasEndX + 100",
+              y: "$canvasheight/2 +5",
+            },
           ],
         },
       ],
@@ -269,14 +299,15 @@ function createDataPowerYear(data) {
     data: [
       {
         label: previousYear,
-        value: data[0] * costInYear,
+        value: (data[0] * costInMonth).toFixed(2),
       },
       {
         label: currentYear,
-        value: data[1] * costInYear,
+        value: (data[1] * costInMonth).toFixed(2),
       },
     ],
   };
+  console.log(data[1] * costInYear);
   return second_chart_year;
 }
 
