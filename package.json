@@ -9,7 +9,7 @@
     "react-bootstrap": "^0.32.1",
     "react-dom": "^15.6.2",
     "react-fusioncharts": "1.0.5",
-    "react-redux": "^6.0.0",
+    "react-redux": "^5.1.1",
     "react-scripts": "1.1.0",
     "redux": "^4.1.1",
     "redux-thunk": "^2.4.1",
