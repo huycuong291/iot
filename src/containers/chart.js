@@ -16,16 +16,12 @@ import chartConfigs1, {
   first_chart_year,
 } from "../chart-configs/dashboard_first_chart";
 import chartConfigs2, {
-  second_chart_today,
-  second_chart_month,
-  second_chart_year,
+  createDataPowerToday,
+  createDataPowerMonth,
+  createDataPowerYear,
 } from "../chart-configs/dashboard_second_chart";
-import chartConfigs3, { createChartData } from "../chart-configs/dashboard_third_chart";
-import chartConfigs4, {
-  fourth_chart_today,
-  fourth_chart_month,
-  fourth_chart_year,
-} from "../chart-configs/dashboard_fourth_chart";
+import chartConfigs3, { createChartData3 } from "../chart-configs/dashboard_third_chart";
+import chartConfigs4, { createChartData4 } from "../chart-configs/dashboard_fourth_chart";
 import chartConfigs5, {
   fifth_chart_today,
   fifth_chart_month,
@@ -109,22 +105,123 @@ import {
   pmgeArr,
 } from "../emissions/emission_data";
 import fetchData from "../api/dht11";
+
 charts(FusionCharts);
 widgets(FusionCharts);
 powercharts(FusionCharts);
 theme(FusionCharts);
 
 FusionCharts.options.creditLabel = false;
+function filterDataByDay(convertedData) {
+  const now = moment();
+  const filteredData = convertedData.filter((item) =>
+    moment(item.time, "M/D/YYYY, h:mm:ss A").isSameOrAfter(now, "day")
+  );
+  return filteredData;
+}
+function calculatePowerForPeriod(data, startMoment, endMoment) {
+  let sum = 0;
+  data.forEach((item) => {
+    let itemMoment = moment(item.time, "MM/DD/YYYY, hh:mm:ss a");
+    if (itemMoment.isBetween(startMoment, endMoment, null, "[]")) {
+      sum += parseFloat(item.power);
+    }
+  });
+  console.log(sum);
+  return sum;
+}
+
+function calculateYesterdayToday(data) {
+  let todayStart = moment().startOf("day");
+  let yesterdayStart = moment().subtract(1, "days").startOf("day");
+  return createDataPowerToday([
+    calculatePowerForPeriod(data, yesterdayStart, todayStart),
+    calculatePowerForPeriod(data, todayStart, moment()),
+  ]);
+}
+
+function calculateLastMonthThisMonth(data) {
+  let thisMonthStart = moment().startOf("month");
+  let lastMonthStart = moment().subtract(1, "months").startOf("month");
+  return createDataPowerMonth([
+    calculatePowerForPeriod(data, lastMonthStart, thisMonthStart),
+    calculatePowerForPeriod(data, thisMonthStart, moment()),
+  ]);
+}
+
+function calculateLastYearThisYear(data) {
+  let thisYearStart = moment().startOf("year");
+  let lastYearStart = moment().subtract(1, "years").startOf("year");
+
+  return createDataPowerYear([
+    calculatePowerForPeriod(data, lastYearStart, thisYearStart),
+    calculatePowerForPeriod(data, thisYearStart, moment()),
+  ]);
+}
+
+function getHumidityValues(data) {
+  let humidityArray = [];
+
+  for (let key in data) {
+    if (data.hasOwnProperty(key)) {
+      humidityArray.push(parseFloat(data[key].humidity));
+    }
+  }
+
+  return humidityArray;
+}
+
+function getPowerValues(data) {
+  let power = [];
+
+  for (let key in data) {
+    if (data.hasOwnProperty(key)) {
+      power.push(parseFloat(data[key].power));
+    }
+  }
+
+  return power;
+}
+
+function getTemperatureValues(data) {
+  let temperatureArray = [];
+
+  for (let key in data) {
+    if (data.hasOwnProperty(key)) {
+      temperatureArray.push(parseFloat(data[key].temperature));
+    }
+  }
+
+  return temperatureArray;
+}
 
 class ChartDetail extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      data: [],
+    };
+  }
+
+  async fetchDataAndSaveToState() {
+    const fetchedData = await fetchData();
+    this.setState({
+      data: fetchedData,
+    });
+    if (fetchedData) {
+      await document.getElementById("month").click();
+      await setTimeout(() => {
+        document.getElementById("month").click();
+      }, 500);
+    }
+  }
+
   componentDidMount() {
-    document.getElementById("month").click();
-    setTimeout(function () {
-      document.getElementById("month").click();
-    }, 300);
+    this.fetchDataAndSaveToState();
   }
 
   componentDidUpdate() {
+    const that = this;
     var t = document.getElementById("today");
     var m = document.getElementById("month");
     var y = document.getElementById("year");
@@ -132,12 +229,7 @@ class ChartDetail extends Component {
     if (this.props.user.id === 1) {
       setTimeout(function () {
         document.getElementById("month").click();
-      }, 300);
-
-      ReactDOM.unmountComponentAtNode(document.getElementById("chart1"));
-
-      document.getElementById("parent1").setAttribute("class", "col-lg-6 col-xl-6");
-      document.getElementById("text1").innerHTML = "COST PREDICTED";
+      }, 500);
 
       document.getElementById("Dashboard").setAttribute("class", "left-option active");
 
@@ -160,59 +252,36 @@ class ChartDetail extends Component {
       document.getElementById("parent4").style.width = "auto";
       document.getElementById("parent4").style.height = "auto";
 
-      // ReactDOM.unmountComponentAtNode(document.getElementById('chart5'));
-      // document.getElementById("parent5").style.display = "block";
-      // document.getElementById("parent5").style.width = "auto";
-      // document.getElementById("parent5").style.height = "auto";
-
-      // ReactDOM.unmountComponentAtNode(document.getElementById('chart6'));
-      // document.getElementById("parent6").style.display = "block";
-      // document.getElementById("parent6").style.width = "auto";
-      // document.getElementById("parent6").style.height = "auto";
-
-      ReactDOM.render(<ReactFC {...chartConfigs1} />, document.getElementById("chart1"));
-
       ReactDOM.render(<ReactFC {...chartConfigs2} />, document.getElementById("chart2"));
 
       ReactDOM.render(<ReactFC {...chartConfigs3} />, document.getElementById("chart3"));
 
       ReactDOM.render(<ReactFC {...chartConfigs4} />, document.getElementById("chart4"));
 
-      // ReactDOM.render(
-      //     <ReactFC {...chartConfigs5} />,
-      //     document.getElementById('chart5'));
-      // ReactDOM.render(
-      //     <ReactFC {...chartConfigs6} />,
-      //     document.getElementById('chart6'));
-
-      // ReactDOM.render(
-      //     <ReactFC {...chartConfigs7} />,
-      //     document.getElementById('chart7'));
-
-      // logic for today button when the user is on dashboard
-
-      // var t = document.getElementById("today");
+      var t = document.getElementById("today");
 
       t.onclick = async function () {
         document.getElementById("date").innerHTML = moment().format("MMMM, Do YYYY");
 
-        const todaynewdata1 = first_chart_today;
-        const todaynewdata2 = second_chart_today;
-        const todaynewdata4 = fourth_chart_today;
         const todaynewdata5 = fifth_chart_today;
         const todaynewdata6 = sixth_chart_today;
         const todaynewdata7 = seventh_chart_today;
 
         // Assume fetchData returns the full chart configuration for mychart3
-        var mychart3Data = await fetchData();
 
-        FusionCharts.items["mychart1"].setJSONData(todaynewdata1);
-        FusionCharts.items["mychart2"].setJSONData(todaynewdata2);
+        let humidity = [];
+        let temperature = [];
+        if (that.state) {
+          humidity = getHumidityValues(that.state.data);
+          temperature = getTemperatureValues(that.state.data);
 
+          FusionCharts.items["mychart2"].setJSONData(calculateYesterdayToday(that.state.data));
+          FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
+
+          FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
+        }
         // Update mychart3 with fetched data
-        FusionCharts.items["mychart3"].setJSONData(createChartData(mychart3Data));
 
-        FusionCharts.items["mychart4"].setJSONData(todaynewdata4);
         // FusionCharts.items['mychart5'].setJSONData(todaynewdata5);
         // FusionCharts.items['mychart6'].setJSONData(todaynewdata6);
         // FusionCharts.items['mychart10'].setJSONData(todaynewdata7);
@@ -224,15 +293,20 @@ class ChartDetail extends Component {
       m.onclick = async function () {
         document.getElementById("date").innerHTML = moment().format("MMMM YYYY");
 
-        var monthnewdata1 = first_chart_month;
-        var monthnewdata2 = second_chart_month;
-        var mychart3Data = await fetchData();
-        var monthnewdata5 = fifth_chart_month;
-        var monthnewdata6 = sixth_chart_month;
-        var monthnewdata7 = seventh_chart_month;
-        FusionCharts.items["mychart3"].setJSONData(createChartData(mychart3Data));
-        FusionCharts.items["mychart1"].setJSONData(monthnewdata1);
-        FusionCharts.items["mychart2"].setJSONData(monthnewdata2);
+        let humidity = [];
+        let temperature = [];
+        if (that.state) {
+          humidity = getHumidityValues(filterDataByDay(that.state.data));
+          temperature = getTemperatureValues(filterDataByDay(that.state.data));
+          let power = getPowerValues(that.state.data);
+          console.log(that.state.data);
+
+          setTimeout(function () {
+            FusionCharts.items["mychart2"].setJSONData(calculateLastMonthThisMonth(that.state.data));
+            FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
+            FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
+          }, 500);
+        }
       };
 
       setTimeout(function () {
@@ -243,17 +317,17 @@ class ChartDetail extends Component {
       y.onclick = async function () {
         document.getElementById("date").innerHTML = moment().format("YYYY");
 
-        var yearnewdata1 = first_chart_year;
-        var yearnewdata2 = second_chart_year;
+        let humidity = [];
+        let temperature = [];
+        if (that.state) {
+          humidity = getHumidityValues(that.state.data);
+          temperature = getTemperatureValues(that.state.data);
+          FusionCharts.items["mychart2"].setJSONData(calculateLastYearThisYear(that.state.data));
+          FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
+          FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
+        }
 
-        var yearnewdata5 = fifth_chart_year;
-        var yearnewdata6 = sixth_chart_year;
-        var yearnewdata7 = seventh_chart_year;
-        var mychart3Data = await fetchData();
-
-        FusionCharts.items["mychart3"].setJSONData(createChartData(mychart3Data));
-        FusionCharts.items["mychart1"].setJSONData(yearnewdata1);
-        FusionCharts.items["mychart2"].setJSONData(yearnewdata2);
+        // Update mychart3 with fetched data
 
         // FusionCharts.items['mychart5'].setJSONData(yearnewdata5);
         // FusionCharts.items['mychart6'].setJSONData(yearnewdata6);
@@ -269,9 +343,6 @@ class ChartDetail extends Component {
       document.getElementById("Appliances").setAttribute("class", "left-option");
 
       document.getElementById("bd-docs-nav").setAttribute("class", "bd-links collapse");
-
-      document.getElementById("parent1").setAttribute("class", "chart1-co col-lg-12 col-xl-12");
-      document.getElementById("text1").innerHTML = "Cost";
 
       ReactDOM.unmountComponentAtNode(document.getElementById("chart2"));
 

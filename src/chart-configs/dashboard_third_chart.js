@@ -1,8 +1,9 @@
 import moment from "moment";
 
-var dayValueArr = [];
-
-export function createChartData(dayValueArr) {
+export function createChartData3(dayValueArr) {
+  if (!dayValueArr) {
+    dayValueArr = [];
+  }
   var timeFlag = moment().format("a");
   var currentHour;
   // eslint-disable-next-line
@@ -29,7 +30,6 @@ export function createChartData(dayValueArr) {
     }
   }
 
-  console.log(dayValueArr);
   var activeArr = [];
   // eslint-disable-next-line
   for (var i = 1; i <= 23; i++) {
@@ -120,7 +120,7 @@ var chartConfigs3 = {
   dataFormat: "JSON",
   width: "100%",
   height: "300",
-  dataSource: createChartData(dayValueArr),
+  dataSource: [],
 };
 
 export default chartConfigs3;
