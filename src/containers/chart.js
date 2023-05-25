@@ -272,8 +272,8 @@ class ChartDetail extends Component {
         let humidity = [];
         let temperature = [];
         if (that.state) {
-          humidity = getHumidityValues(that.state.data);
-          temperature = getTemperatureValues(that.state.data);
+          humidity = getHumidityValues(filterDataByDay(that.state.data));
+          temperature = getTemperatureValues(filterDataByDay(that.state.data));
 
           FusionCharts.items["mychart2"].setJSONData(calculateYesterdayToday(that.state.data));
           FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
@@ -320,8 +320,8 @@ class ChartDetail extends Component {
         let humidity = [];
         let temperature = [];
         if (that.state) {
-          humidity = getHumidityValues(that.state.data);
-          temperature = getTemperatureValues(that.state.data);
+          humidity = getHumidityValues(filterDataByDay(that.state.data));
+          temperature = getTemperatureValues(filterDataByDay(that.state.data));
           FusionCharts.items["mychart2"].setJSONData(calculateLastYearThisYear(that.state.data));
           FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
           FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
