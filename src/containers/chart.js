@@ -10,11 +10,7 @@ import powercharts from "fusioncharts/fusioncharts.powercharts";
 import theme from "fusioncharts/themes/fusioncharts.theme.ocean";
 import ReactFC from "react-fusioncharts";
 
-import chartConfigs1, {
-  first_chart_today,
-  first_chart_month,
-  first_chart_year,
-} from "../chart-configs/dashboard_first_chart";
+import chartConfigs1, { createChartData1 } from "../chart-configs/dashboard_first_chart";
 import chartConfigs2, {
   createDataPowerToday,
   createDataPowerMonth,
@@ -119,6 +115,78 @@ function filterDataByDay(convertedData) {
   );
   return filteredData;
 }
+
+function filterDataByMonth(convertedData) {
+  const now = moment();
+  let startOfMonth = now.clone().startOf("month");
+  let endOfMonth = now.clone().endOf("month");
+
+  let dayCount = endOfMonth.date(); // Get total days in the month
+  let filteredData = [];
+
+  for (let i = 0; i < dayCount; i++) {
+    let currentDate = startOfMonth.clone().add(i, "days");
+    let dataForTheDay = convertedData.reduce(
+      (acc, item) => {
+        let itemDate = moment(item.time, "M/D/YYYY, h:mm:ss A");
+        if (itemDate.isSame(currentDate, "day")) {
+          acc.current += parseFloat(item.current);
+          acc.power += parseFloat(item.power);
+          acc.humidity += parseFloat(item.humidity);
+          acc.temperature += parseFloat(item.temperature);
+        }
+        return acc;
+      },
+      {
+        time: currentDate.format("M/D/YYYY, h:mm:ss A"),
+        current: 0,
+        power: 0,
+        humidity: 0,
+        temperature: 0,
+      }
+    );
+
+    filteredData.push(dataForTheDay);
+  }
+
+  return filteredData;
+}
+
+function filterDataByYear(convertedData) {
+  const now = moment();
+  let startOfYear = now.clone().startOf("year");
+  let endOfYear = now.clone().endOf("year");
+
+  let monthCount = endOfYear.month() - startOfYear.month() + 1; // Get total months in the year
+  let filteredData = [];
+
+  for (let i = 0; i < monthCount; i++) {
+    let currentMonth = startOfYear.clone().add(i, "months");
+    let dataForTheMonth = convertedData.reduce(
+      (acc, item) => {
+        let itemDate = moment(item.time, "M/D/YYYY, h:mm:ss A");
+        if (itemDate.month() === currentMonth.month() && itemDate.year() === currentMonth.year()) {
+          acc.current += parseFloat(item.current);
+          acc.power += parseFloat(item.power);
+          acc.humidity += parseFloat(item.humidity);
+          acc.temperature += parseFloat(item.temperature);
+        }
+        return acc;
+      },
+      {
+        time: currentMonth.format("M/YYYY"),
+        current: 0,
+        power: 0,
+        humidity: 0,
+        temperature: 0,
+      }
+    );
+
+    filteredData.push(dataForTheMonth);
+  }
+
+  return filteredData;
+}
 function calculatePowerForPeriod(data, startMoment, endMoment) {
   let sum = 0;
   data.forEach((item) => {
@@ -157,6 +225,18 @@ function calculateLastYearThisYear(data) {
     calculatePowerForPeriod(data, lastYearStart, thisYearStart),
     calculatePowerForPeriod(data, thisYearStart, moment()),
   ]);
+}
+
+function getPowerValues(data) {
+  let powerArray = [];
+
+  for (let key in data) {
+    if (data.hasOwnProperty(key)) {
+      powerArray.push(parseFloat(data[key].power));
+    }
+  }
+
+  return powerArray;
 }
 
 function getHumidityValues(data) {
@@ -221,6 +301,7 @@ class ChartDetail extends Component {
   }
 
   componentDidUpdate() {
+    console.log(this.state);
     const that = this;
     var t = document.getElementById("today");
     var m = document.getElementById("month");
@@ -252,6 +333,8 @@ class ChartDetail extends Component {
       document.getElementById("parent4").style.width = "auto";
       document.getElementById("parent4").style.height = "auto";
 
+      ReactDOM.render(<ReactFC {...chartConfigs1} />, document.getElementById("chart1"));
+
       ReactDOM.render(<ReactFC {...chartConfigs2} />, document.getElementById("chart2"));
 
       ReactDOM.render(<ReactFC {...chartConfigs3} />, document.getElementById("chart3"));
@@ -271,7 +354,11 @@ class ChartDetail extends Component {
 
         let humidity = [];
         let temperature = [];
+        let power = [];
         if (that.state) {
+          power = getPowerValues(filterDataByDay(that.state.data));
+
+          FusionCharts.items["mychart1"].setJSONData(createChartData1(power, "day"));
           humidity = getHumidityValues(filterDataByDay(that.state.data));
           temperature = getTemperatureValues(filterDataByDay(that.state.data));
 
@@ -295,17 +382,17 @@ class ChartDetail extends Component {
 
         let humidity = [];
         let temperature = [];
+        let power = [];
         if (that.state) {
-          humidity = getHumidityValues(filterDataByDay(that.state.data));
+          power = getPowerValues(filterDataByMonth(that.state.data));
+
+          FusionCharts.items["mychart1"].setJSONData(createChartData1(power, "month"));
           temperature = getTemperatureValues(filterDataByDay(that.state.data));
           let power = getPowerValues(that.state.data);
-          console.log(that.state.data);
 
-          setTimeout(function () {
-            FusionCharts.items["mychart2"].setJSONData(calculateLastMonthThisMonth(that.state.data));
-            FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
-            FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
-          }, 500);
+          FusionCharts.items["mychart2"].setJSONData(calculateLastMonthThisMonth(that.state.data));
+          FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
+          FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
         }
       };
 
@@ -319,8 +406,12 @@ class ChartDetail extends Component {
 
         let humidity = [];
         let temperature = [];
+        let power = [];
         if (that.state) {
-          humidity = getHumidityValues(filterDataByDay(that.state.data));
+          power = getPowerValues(filterDataByYear(that.state.data));
+          console.log(power);
+          FusionCharts.items["mychart1"].setJSONData(createChartData1(power, "year"));
+
           temperature = getTemperatureValues(filterDataByDay(that.state.data));
           FusionCharts.items["mychart2"].setJSONData(calculateLastYearThisYear(that.state.data));
           FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
@@ -335,8 +426,6 @@ class ChartDetail extends Component {
       };
     } else if (this.props.user.id === 2) {
       utils.disposeChart(FusionCharts, "mychart8");
-
-      ReactDOM.unmountComponentAtNode(document.getElementById("chart1"));
 
       document.getElementById("Dashboard").setAttribute("class", "left-option");
 
@@ -374,8 +463,6 @@ class ChartDetail extends Component {
       // document.getElementById("parent6").style.display = "none";
       // document.getElementById("parent6").style.width = "0px";
       // document.getElementById("parent6").style.height = "0px";
-
-      ReactDOM.render(<CostComponent costchart={costchart} />, document.getElementById("chart1"));
 
       // logic for today button
 
@@ -442,9 +529,6 @@ class ChartDetail extends Component {
 
         document.getElementById("date").innerHTML = moment().format("MMMM YYYY");
 
-        document.getElementById("c2").innerHTML = "Last Month";
-        document.getElementById("c1").innerHTML = "This Month";
-
         if (window.b2selected) {
           var comonth2 = cost_last_month;
           FusionCharts.items["mychart8"].setJSONData(comonth2);
@@ -472,11 +556,7 @@ class ChartDetail extends Component {
         } else {
           var comonth = cost_this_month;
 
-          FusionCharts.items["mychart8"].setJSONData(comonth);
-
           //  document.getElementById("cost-elements").style.paddingLeft = "0px";
-          document.getElementById("co-tablecell-title1").innerHTML = moment().subtract(1, "month").format("MMMM");
-          document.getElementById("co-tablecell-value1").innerHTML = "$" + monthArr[1];
 
           var sfmVal = 0;
           // eslint-disable-next-line
@@ -488,12 +568,6 @@ class ChartDetail extends Component {
               parseFloat(mDeviceTreeSplit[i]);
           }
           sfmVal = Math.round(sfmVal * 100) / 100;
-
-          document.getElementById("co-tablecell-title2").innerHTML = "So Far This Month";
-          document.getElementById("co-tablecell-value2").innerHTML = "$" + sfmVal;
-
-          document.getElementById("co-tablecell-title3").innerHTML = "";
-          document.getElementById("co-tablecell-value3").innerHTML = "";
 
           // document.getElementById("co-tablecell-title4").style.display = "block";
           // document.getElementById("co-tablecell-value4").style.display = "block";
@@ -511,9 +585,6 @@ class ChartDetail extends Component {
         window.selectedperiod = "year";
         document.getElementById("date").innerHTML = moment().format("YYYY");
 
-        document.getElementById("c2").innerHTML = "Previous Year";
-        document.getElementById("c1").innerHTML = "This Year";
-
         // document.getElementById("co-tablecell-value1").style.paddingLeft = "20px";
         // document.getElementById("co-tablecell-value2").style.paddingLeft = "20px";
 
@@ -522,16 +593,6 @@ class ChartDetail extends Component {
           FusionCharts.items["mychart8"].setJSONData(coyear2);
 
           //  document.getElementById("cost-elements").style.paddingLeft = "200px";
-
-          document.getElementById("co-tablecell-title1").innerHTML = moment().subtract(2, "year").format("YYYY");
-          document.getElementById("co-tablecell-value1").innerHTML = "$" + yearArr[0];
-
-          document.getElementById("co-tablecell-title2").innerHTML = moment().subtract(1, "year").format("YYYY");
-          document.getElementById("co-tablecell-value2").innerHTML = "$" + yearArr[1];
-
-          document.getElementById("co-tablecell-title3").innerHTML = "Savings";
-          document.getElementById("co-tablecell-value3").innerHTML =
-            "$" + Math.round((yearArr[0] - yearArr[1]) * 100) / 100;
 
           // document.getElementById("co-tablecell-title4").style.display = "none";
           // document.getElementById("co-tablecell-value4").style.display = "none";
@@ -570,8 +631,6 @@ class ChartDetail extends Component {
       };
     } else if (this.props.user.id === 3) {
       utils.disposeChart(FusionCharts, "mychart12");
-
-      ReactDOM.unmountComponentAtNode(document.getElementById("chart1"));
 
       document.getElementById("parent1").setAttribute("class", "chart1-app col-lg-12 col-xl-12");
       document.getElementById("text1").innerHTML = "APPLIANCES";
@@ -1627,7 +1686,7 @@ class ChartDetail extends Component {
       };
     } else if (this.props.user.id === 4) {
       utils.disposeChart(FusionCharts, "mychart9");
-      ReactDOM.unmountComponentAtNode(document.getElementById("chart1"));
+
       //document.getElementById("date").style.display = "none";
       document.getElementById("parent1").setAttribute("class", "chart1-us col-lg-12 col-xl-12");
       document.getElementById("text1").innerHTML = "USAGE BY ROOMS";
@@ -1724,7 +1783,7 @@ class ChartDetail extends Component {
     // Emission Option Logic.
     else if (this.props.user.id === 5) {
       utils.disposeChart(FusionCharts, "mychart7");
-      ReactDOM.unmountComponentAtNode(document.getElementById("chart1"));
+
       // document.getElementById("date").style.display = "none";
       document.getElementById("parent1").setAttribute("class", "chart1-em col-lg-12 col-xl-12");
       document.getElementById("text1").innerHTML = "EMISSIONS";
@@ -2099,7 +2158,7 @@ class ChartDetail extends Component {
           <h2>{this.props.user.name}</h2>
         </div>
       );
-      ReactDOM.unmountComponentAtNode(document.getElementById("chart1"));
+
       ReactDOM.unmountComponentAtNode(document.getElementById("chart2"));
 
       // utils.disposeChart('mychart7');

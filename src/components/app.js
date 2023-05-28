@@ -114,7 +114,16 @@ class App extends React.Component {
               {/* <!-- time frame row end -->
                     <!-- chart row start -->  */}
               <div className="row mt-3 db-chart">
-                <div className="col-lg-3 col-xl-3"></div>
+                <div id="parent1" className="col-lg-6 col-xl-6">
+                  <div className="chart-card mb-4">
+                    <div className="chart-title" id="text3">
+                      POWER
+                    </div>
+                    <div id="chart1" className="chart">
+                      Chart 1
+                    </div>
+                  </div>
+                </div>
                 <div id="parent2" className="col-lg-6 col-xl-6">
                   <div className="chart-card mb-4">
                     <div className="chart-title" id="text2">
@@ -125,7 +134,7 @@ class App extends React.Component {
                     </div>
                   </div>
                 </div>
-                <div className="col-lg-3 col-xl-3"></div>
+
                 <div id="parent4" className="col-lg-6 col-xl-6">
                   <div className="chart-card mb-4">
                     <div className="chart-title" id="text3">
