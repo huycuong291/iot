@@ -55,9 +55,6 @@ export function createChartData1(dayValueArr = [], time = "day") {
     }
   }
 
-  if (time == "day") {
-    time = "hour";
-  }
   var third_chart_today = {
     chart: {
       bgColor: "#1D1B41",

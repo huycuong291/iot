@@ -4,8 +4,9 @@ export default function () {
       id: 1,
       name: "Dashboard",
     },
+
     {
-      id: 3,
+      id: 2,
       name: "Appliances",
     },
   ];

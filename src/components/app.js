@@ -2,13 +2,9 @@ import React from "react";
 import OptionList from "../containers/optionlist";
 import ChartDetail from "../containers/chart";
 import "./app.css";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { setLogin } from "../actions/login";
+
+import Firebase from "./firebase/firebase";
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   componentDidMount() {
     var todayElem = document.getElementById("today");
     var monthElem = document.getElementById("month");
@@ -34,14 +30,13 @@ class App extends React.Component {
 
     document.getElementById("Dashboard").click();
     document.getElementById("month").click();
-    console.log(this.props.login);
   }
 
   componentDidUpdate() {
     //  console.log("app is updated");
   }
 
-  renderApp() {
+  render() {
     return (
       <div>
         <div className="container-fluid">
@@ -96,10 +91,9 @@ class App extends React.Component {
                 </div>
               </div>
               {/* <!-- heading row end-->
-    
-                <!-- time frame row start --> */}
-
-              <div className="row mt-3" style={{ display: this.props.user.id === 1 ? "flex" : "none" }}>
+        
+                    <!-- time frame row start --> */}
+              <div className="row mt-3">
                 <div className="col-md-7">
                   <ul className="buttonwrapper">
                     <li id="today">
@@ -113,17 +107,14 @@ class App extends React.Component {
                     </li>
                   </ul>
                 </div>
-
                 <div className="col-md-5 text-right date-indicator" id="date">
                   Date
                 </div>
               </div>
-
               {/* <!-- time frame row end -->
-                <!-- chart row start -->  */}
-              <div id="mainapp" style={{ display: this.props.user.id === 3 ? "block" : "none" }}></div>
-              <div className="row mt-3 db-chart" style={{ display: this.props.user.id === 1 ? "block" : "none" }}>
-                <div id="parent1" className="col-lg-12 col-xl-12">
+                    <!-- chart row start -->  */}
+              <div className="row mt-3 db-chart">
+                <div id="parent1" className="col-lg-6 col-xl-6">
                   <div className="chart-card mb-4">
                     <div className="chart-title" id="text3">
                       POWER
@@ -133,7 +124,7 @@ class App extends React.Component {
                     </div>
                   </div>
                 </div>
-                <div id="parent2" className="col-lg-12 col-xl-12">
+                <div id="parent2" className="col-lg-6 col-xl-6">
                   <div className="chart-card mb-4">
                     <div className="chart-title" id="text2">
                       CHANGE IN COST
@@ -144,7 +135,7 @@ class App extends React.Component {
                   </div>
                 </div>
 
-                <div id="parent4" className="col-lg-12 col-xl-12">
+                <div id="parent4" className="col-lg-6 col-xl-6">
                   <div className="chart-card mb-4">
                     <div className="chart-title" id="text3">
                       TEMPERATURE
@@ -154,7 +145,7 @@ class App extends React.Component {
                     </div>
                   </div>
                 </div>
-                <div id="parent3" className="col-lg-12 col-xl-12">
+                <div id="parent3" className="col-lg-6 col-xl-6">
                   <div className="chart-card mb-4">
                     <div className="chart-title" id="text3">
                       HUMIDITY
@@ -172,21 +163,6 @@ class App extends React.Component {
       </div>
     );
   }
-
-  render() {
-    return this.renderApp();
-  }
 }
 
-// "state.activeUser" is set in reducers/index.js
-function mapStateToProps(state) {
-  return {
-    user: state.activeUser,
-    login: state.login,
-  };
-}
-
-function matchDispatchToProps(dispatch) {
-  return bindActionCreators({ setLogin: setLogin }, dispatch);
-}
-export default connect(mapStateToProps, matchDispatchToProps)(App);
+export default App;
