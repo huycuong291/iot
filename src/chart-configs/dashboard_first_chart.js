@@ -58,6 +58,13 @@ export function createChartData1(dayValueArr = [], time = "day") {
   if (time == "day") {
     time = "hour";
   }
+
+  if (time == "month") {
+    time = "day";
+  }
+  if (time == "year") {
+    time = "month";
+  }
   var third_chart_today = {
     chart: {
       bgColor: "#1D1B41",
@@ -91,7 +98,7 @@ export function createChartData1(dayValueArr = [], time = "day") {
       dashLen: "1",
       dashGap: "200",
       yAxisname: "W",
-      xAxisname: "Time" + "(" + time + ")",
+      xAxisname: "Time" + " (" + time + ")",
       toolTipBgcolor: "#484E69",
       toolTipPadding: "5",
       toolTipBorderRadius: "2",

@@ -35,7 +35,6 @@ class AppliancesComponent extends React.Component {
   }
 
   render() {
-    console.log(this.state.data);
     return (
       <div style={{ display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
