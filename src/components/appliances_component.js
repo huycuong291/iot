@@ -27,7 +27,7 @@ class AppliancesComponent extends React.Component {
   }
   componentDidMount() {
     this.fetchDataAndSaveToState();
-    this.interval = setInterval(this.fetchDataAndSaveToState, 5000);
+    this.interval = setInterval(this.fetchDataAndSaveToState, 100);
   }
 
   componentWillUnmount() {
