@@ -227,32 +227,39 @@ function calculatePowerForPeriod(data, startMoment, endMoment) {
   return sum;
 }
 
-function calculateYesterdayToday(data) {
+function calculateYesterdayToday(data, cost) {
   let todayStart = moment().startOf("day");
   let yesterdayStart = moment().subtract(1, "days").startOf("day");
-  return createDataPowerToday([
-    calculatePowerForPeriod(data, yesterdayStart, todayStart),
-    calculatePowerForPeriod(data, todayStart, moment()),
-  ]);
+  return createDataPowerToday(
+    [calculatePowerForPeriod(data, yesterdayStart, todayStart), calculatePowerForPeriod(data, todayStart, moment())],
+    cost
+  );
 }
 
-function calculateLastMonthThisMonth(data) {
+function calculateLastMonthThisMonth(data, cost) {
+  console.log(cost);
   let thisMonthStart = moment().startOf("month");
   let lastMonthStart = moment().subtract(1, "months").startOf("month");
-  return createDataPowerMonth([
-    calculatePowerForPeriod(data, lastMonthStart, thisMonthStart),
-    calculatePowerForPeriod(data, thisMonthStart, moment()),
-  ]);
+  return createDataPowerMonth(
+    [
+      calculatePowerForPeriod(data, lastMonthStart, thisMonthStart),
+      calculatePowerForPeriod(data, thisMonthStart, moment()),
+    ],
+    cost
+  );
 }
 
-function calculateLastYearThisYear(data) {
+function calculateLastYearThisYear(data, cost) {
   let thisYearStart = moment().startOf("year");
   let lastYearStart = moment().subtract(1, "years").startOf("year");
 
-  return createDataPowerYear([
-    calculatePowerForPeriod(data, lastYearStart, thisYearStart),
-    calculatePowerForPeriod(data, thisYearStart, moment()),
-  ]);
+  return createDataPowerYear(
+    [
+      calculatePowerForPeriod(data, lastYearStart, thisYearStart),
+      calculatePowerForPeriod(data, thisYearStart, moment()),
+    ],
+    cost
+  );
 }
 
 function getPowerValues(data) {
@@ -308,6 +315,7 @@ class ChartDetail extends Component {
     super(props);
     this.state = {
       data: [],
+      cost: 0.00172,
     };
   }
 
@@ -327,14 +335,21 @@ class ChartDetail extends Component {
   componentDidMount() {
     this.fetchDataAndSaveToState();
   }
-
+  handlePriceChange = (event) => {
+    this.setState({
+      ...this.state,
+      cost: event.target.value,
+    });
+  };
   componentDidUpdate() {
     console.log(this.state);
     const that = this;
     var t = document.getElementById("today");
     var m = document.getElementById("month");
     var y = document.getElementById("year");
+    this.priceInput = document.getElementById("electricity-price");
 
+    this.priceInput.addEventListener("change", this.handlePriceChange);
     if (this.props.user.id === 1) {
       setTimeout(function () {
         document.getElementById("month").click();
@@ -391,7 +406,7 @@ class ChartDetail extends Component {
             humidity = getHumidityValues(filterDataByDay(that.state.data));
             temperature = getTemperatureValues(filterDataByDay(that.state.data));
 
-            FusionCharts.items["mychart2"].setJSONData(calculateYesterdayToday(that.state.data));
+            FusionCharts.items["mychart2"].setJSONData(calculateYesterdayToday(that.state.data, that.state.cost));
             FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
 
             FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
@@ -421,7 +436,7 @@ class ChartDetail extends Component {
             humidity = getHumidityValues(filterDataByDay(that.state.data));
             temperature = getTemperatureValues(filterDataByDay(that.state.data));
 
-            FusionCharts.items["mychart2"].setJSONData(calculateLastMonthThisMonth(that.state.data));
+            FusionCharts.items["mychart2"].setJSONData(calculateLastMonthThisMonth(that.state.data, that.state.cost));
             FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
             FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
           }, 300);
@@ -443,7 +458,7 @@ class ChartDetail extends Component {
             FusionCharts.items["mychart1"].setJSONData(createChartData1(power, "year"));
             humidity = getHumidityValues(filterDataByDay(that.state.data));
             temperature = getTemperatureValues(filterDataByDay(that.state.data));
-            FusionCharts.items["mychart2"].setJSONData(calculateLastYearThisYear(that.state.data));
+            FusionCharts.items["mychart2"].setJSONData(calculateLastYearThisYear(that.state.data, that.state.cost));
             FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
             FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
           }, 300);
