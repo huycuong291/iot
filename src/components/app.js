@@ -5,6 +5,7 @@ import "./app.css";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { setLogin } from "../actions/login";
+import bg from "../bg.png";
 const jwt = "cuongdeptraithenhohahahaha";
 class App extends React.Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class App extends React.Component {
       isLoggedIn: false,
       username: "",
       password: "",
+      errorMessage: "",
     };
   }
 
@@ -24,16 +26,24 @@ class App extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+
     if (this.state.username === "admin" && this.state.password === "123") {
       localStorage.setItem("jwt", jwt);
       this.setState({
         ...this.state,
         isLoggedIn: true,
+        errorMessage: "",
       });
       document.getElementById("Dashboard").click();
       document.getElementById("month").click();
+    } else {
+      this.setState({
+        ...this.state,
+        errorMessage: "Invalid username or password",
+      });
     }
   };
+
   componentDidMount() {
     const jwt = localStorage.getItem("jwt");
     if (jwt)
@@ -218,41 +228,46 @@ class App extends React.Component {
   }
   renderLogin() {
     return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{
-          display: this.state.isLoggedIn ? "none" : "block",
-          backgroundColor: "#181745",
-          color: "white",
-          height: "100vh",
-        }}
-      >
-        <form className="bg-blue p-5 rounded shadow" onSubmit={this.handleSubmit}>
-          <h2 className="text-center mb-4">Login</h2>
-          <div className="form-group">
-            <label>Username:</label>
-            <input
-              type="text"
-              name="username"
-              onChange={this.handleInputChange}
-              className="form-control"
-              placeholder="Enter username"
-            />
-          </div>
-          <div className="form-group">
-            <label>Password:</label>
-            <input
-              type="password"
-              name="password"
-              onChange={this.handleInputChange}
-              className="form-control"
-              placeholder="Enter password"
-            />
-          </div>
-          <div className="form-group text-center">
-            <input type="submit" value="Login" className="btn btn-primary w-100" />
-          </div>
-        </form>
+      <div className="login-background">
+        <div
+          className="login-container d-flex justify-content-center align-items-center"
+          style={{
+            display: this.state.isLoggedIn ? "none" : "flex",
+            backgroundColor: "rgba(24,23,69,0.5)",
+            color: "white",
+            height: "100vh",
+            width: "100vw",
+          }}
+        >
+          <form className="bg-blue p-5 rounded shadow" onSubmit={this.handleSubmit}>
+            <h2 className="text-center mb-4">Login</h2>
+
+            {this.state.errorMessage && <div className="alert alert-danger">{this.state.errorMessage}</div>}
+            <div className="form-group">
+              <label>Username:</label>
+              <input
+                type="text"
+                name="username"
+                onChange={this.handleInputChange}
+                className="form-control"
+                placeholder="Enter username"
+              />
+            </div>
+            <div className="form-group">
+              <label>Password:</label>
+              <input
+                type="password"
+                name="password"
+                onChange={this.handleInputChange}
+                className="form-control"
+                placeholder="Enter password"
+              />
+            </div>
+            <div className="form-group text-center">
+              <input type="submit" value="Login" className="btn btn-primary w-100" />
+            </div>
+          </form>
+        </div>
       </div>
     );
   }

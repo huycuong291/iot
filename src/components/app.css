@@ -18,6 +18,17 @@
     justify-content: space-between;
     align-items: center;
 }
+.login-background {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-image: url('https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/274509753_649818029406921_8791381549516495756_n.png?_nc_cat=109&ccb=1-7&_nc_sid=ae9488&_nc_ohc=YuLzcwGiW_MAX9tG2YS&_nc_ht=scontent.fsgn2-4.fna&oh=03_AdQwUr4jEJcSVEBEMncd0m13Xt5_Kf3CcPKBjAD5wWSxzQ&oe=649D79B2');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
 
 @font-face {
     font-family: 'Nunito Sans Semi-bold';
