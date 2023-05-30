@@ -191,6 +191,29 @@ class App extends React.Component {
                       <div className="chart-title" id="text2">
                         CHANGE IN COST
                       </div>
+                      <div
+                        className="input-group mb-3"
+                        style={{ marginLeft: "80%", width: "20%" }}
+                        onChange={() =>
+                          this.setState({
+                            ...this.state,
+                            errorMessage: "",
+                          })
+                        }
+                      >
+                        <div className="input-group-prepend">
+                          <span className="input-group-text" id="basic-addon1">
+                            Electricity Price
+                          </span>
+                        </div>
+                        <input
+                          id="electricity-price"
+                          className="form-control"
+                          placeholder="Enter price"
+                          aria-label="Price"
+                          aria-describedby="basic-addon1"
+                        />
+                      </div>
                       <div id="chart2" className="chart">
                         Chart 2
                       </div>

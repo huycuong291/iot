@@ -1,6 +1,7 @@
 import moment from "moment";
 import "../index.css";
 import { costInDay, costInMonth, costInYear } from "../constants/cost";
+
 function calculatePercentageChange(numbers) {
   let oldNumber = numbers[0];
   let newNumber = numbers[1];
@@ -25,7 +26,7 @@ function getTextAndColor(numbers) {
   }
 }
 
-function createDataPowerToday(data) {
+function createDataPowerToday(data, cost) {
   const temp = getTextAndColor(data);
   const text = temp.text;
   const color = temp.color;
@@ -108,18 +109,18 @@ function createDataPowerToday(data) {
     data: [
       {
         label: previousDay,
-        value: (data[0] * costInMonth).toFixed(2),
+        value: (data[0] * cost).toFixed(2),
       },
       {
         label: currentDay,
-        value: (data[1] * costInMonth).toFixed(2),
+        value: (data[1] * cost).toFixed(2),
       },
     ],
   };
   return second_chart_today;
 }
 
-function createDataPowerMonth(data) {
+function createDataPowerMonth(data, cost) {
   const temp = getTextAndColor(data);
   const text = temp.text;
   const color = temp.color;
@@ -203,11 +204,11 @@ function createDataPowerMonth(data) {
     data: [
       {
         label: previousMonth,
-        value: (data[0] * costInMonth).toFixed(2),
+        value: (data[0] * cost).toFixed(2),
       },
       {
         label: currentMonth,
-        value: (data[1] * costInMonth).toFixed(2),
+        value: (data[1] * cost).toFixed(2),
       },
     ],
   };
@@ -215,7 +216,7 @@ function createDataPowerMonth(data) {
   return second_chart_month;
 }
 
-function createDataPowerYear(data) {
+function createDataPowerYear(data, cost) {
   const temp = getTextAndColor(data);
   const text = temp.text;
   const color = temp.color;
@@ -299,11 +300,11 @@ function createDataPowerYear(data) {
     data: [
       {
         label: previousYear,
-        value: (data[0] * costInMonth).toFixed(2),
+        value: (data[0] * cost).toFixed(2),
       },
       {
         label: currentYear,
-        value: (data[1] * costInMonth).toFixed(2),
+        value: (data[1] * cost).toFixed(2),
       },
     ],
   };
