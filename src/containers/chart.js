@@ -415,8 +415,8 @@ class ChartDetail extends Component {
           power = getPowerValues(filterDataByMonth(that.state.data));
 
           FusionCharts.items["mychart1"].setJSONData(createChartData1(power, "month"));
+          humidity = getHumidityValues(filterDataByDay(that.state.data));
           temperature = getTemperatureValues(filterDataByDay(that.state.data));
-          let power = getPowerValues(that.state.data);
 
           FusionCharts.items["mychart2"].setJSONData(calculateLastMonthThisMonth(that.state.data));
           FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
@@ -437,9 +437,9 @@ class ChartDetail extends Component {
         let power = [];
         if (that.state) {
           power = getPowerValues(filterDataByYear(that.state.data));
-          console.log(power);
-          FusionCharts.items["mychart1"].setJSONData(createChartData1(power, "year"));
 
+          FusionCharts.items["mychart1"].setJSONData(createChartData1(power, "year"));
+          humidity = getHumidityValues(filterDataByDay(that.state.data));
           temperature = getTemperatureValues(filterDataByDay(that.state.data));
           FusionCharts.items["mychart2"].setJSONData(calculateLastYearThisYear(that.state.data));
           FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
