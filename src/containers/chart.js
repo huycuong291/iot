@@ -395,7 +395,7 @@ class ChartDetail extends Component {
             FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
 
             FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
-          }, 200);
+          }, 300);
         }
         // Update mychart3 with fetched data
 
@@ -424,7 +424,7 @@ class ChartDetail extends Component {
             FusionCharts.items["mychart2"].setJSONData(calculateLastMonthThisMonth(that.state.data));
             FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
             FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
-          }, 200);
+          }, 300);
         }
       };
 
@@ -449,7 +449,7 @@ class ChartDetail extends Component {
             FusionCharts.items["mychart2"].setJSONData(calculateLastYearThisYear(that.state.data));
             FusionCharts.items["mychart3"].setJSONData(createChartData3(humidity));
             FusionCharts.items["mychart4"].setJSONData(createChartData4(temperature));
-          }, 200);
+          }, 300);
         }
 
         // Update mychart3 with fetched data
