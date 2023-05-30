@@ -428,9 +428,6 @@ class ChartDetail extends Component {
         }
       };
 
-      setTimeout(function () {
-        document.getElementById("month").click();
-      });
       //logic for year button when the user is on dashboard
 
       y.onclick = async function () {
