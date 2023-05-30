@@ -110,9 +110,37 @@ theme(FusionCharts);
 FusionCharts.options.creditLabel = false;
 function filterDataByDay(convertedData) {
   const now = moment();
-  const filteredData = convertedData.filter((item) =>
-    moment(item.time, "M/D/YYYY, h:mm:ss A").isSameOrAfter(now, "day")
-  );
+  let startOfDay = now.clone().startOf("day");
+  let endOfDay = now.clone().endOf("day");
+
+  let hourCount = 24; // Get total hours in the day
+  let filteredData = [];
+
+  for (let i = 0; i < hourCount; i++) {
+    let currentHour = startOfDay.clone().add(i, "hours");
+    let dataForTheHour = convertedData.reduce(
+      (acc, item) => {
+        let itemDate = moment(item.time, "M/D/YYYY, h:mm:ss A");
+        if (itemDate.isSame(currentHour, "hour")) {
+          acc.current += parseFloat(item.current);
+          acc.power += parseFloat(item.power);
+          acc.humidity += parseFloat(item.humidity);
+          acc.temperature += parseFloat(item.temperature);
+        }
+        return acc;
+      },
+      {
+        time: currentHour.format("M/D/YYYY, h:mm:ss A"),
+        current: 0,
+        power: 0,
+        humidity: 0,
+        temperature: 0,
+      }
+    );
+
+    filteredData.push(dataForTheHour);
+  }
+
   return filteredData;
 }
 
