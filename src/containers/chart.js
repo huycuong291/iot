@@ -326,9 +326,9 @@ class ChartDetail extends Component {
     });
     if (fetchedData) {
       this.props.user.id === 1 && (await document.getElementById("month").click());
-      await setTimeout(() => {
+      setTimeout(() => {
         this.props.user.id === 1 && document.getElementById("month").click();
-      }, 500);
+      }, 1000);
     }
   }
 
@@ -353,7 +353,7 @@ class ChartDetail extends Component {
     if (this.props.user.id === 1) {
       setTimeout(function () {
         document.getElementById("month").click();
-      }, 500);
+      }, 1000);
 
       document.getElementById("Dashboard").setAttribute("class", "left-option active");
 

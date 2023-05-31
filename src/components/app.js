@@ -75,7 +75,6 @@ class App extends React.Component {
 
     document.getElementById("Dashboard").click();
     document.getElementById("month").click();
-    console.log(this.props.login);
   }
 
   componentDidUpdate() {
